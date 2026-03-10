@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       SliverToBoxAdapter(child: HmCategory(categoryList: _categoryList)),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
-      SliverToBoxAdapter(child: HmSuggestion()),
+      SliverToBoxAdapter(child: HmSuggestion(specialRecommendation: _specialRecommendation)),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       SliverToBoxAdapter(
         child: Padding(
@@ -61,16 +61,29 @@ class _HomeViewState extends State<HomeView> {
     ];
   }
 
+  //特惠推荐
+  SpecialRecommendation _specialRecommendation = SpecialRecommendation(
+    id: "",
+    title: "",
+    subTypes: [],
+  );
   @override
   void initState() {
     super.initState();
     _getBannerList();
     _getCategoryList();
+    _getSpecialRecommendation();
   }
 
   //获取分类列表
   void _getCategoryList() async {
     _categoryList = await getCategoryListAPI();
+    setState(() {});
+  }
+
+  //获取特惠推荐
+  void _getSpecialRecommendation() async {
+    _specialRecommendation = await getSpecialRecommendationAPI();
     setState(() {});
   }
 
