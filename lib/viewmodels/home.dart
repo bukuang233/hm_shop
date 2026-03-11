@@ -136,9 +136,7 @@ class GoodsItemsData {
       pages: json["pages"] ?? 0,
       page: json["page"] ?? 1,
       items: json["items"] != null
-          ? (json["items"] as List)
-                .map((e) => GoodsItem.formJSON(e))
-                .toList()
+          ? (json["items"] as List).map((e) => GoodsItem.formJSON(e)).toList()
           : [],
     );
   }
@@ -148,11 +146,7 @@ class SubType {
   String id;
   String title;
   GoodsItemsData goodsItems;
-  SubType({
-    required this.id,
-    required this.title,
-    required this.goodsItems,
-  });
+  SubType({required this.id, required this.title, required this.goodsItems});
   factory SubType.formJSON(Map<String, dynamic> json) {
     return SubType(
       id: json["id"] ?? "",
@@ -176,10 +170,33 @@ class SpecialRecommendation {
       id: json["id"] ?? "",
       title: json["title"] ?? "",
       subTypes: json["subTypes"] != null
-          ? (json["subTypes"] as List)
-                .map((e) => SubType.formJSON(e))
-                .toList()
+          ? (json["subTypes"] as List).map((e) => SubType.formJSON(e)).toList()
           : [],
+    );
+  }
+}
+
+class GoodDetailItem extends GoodsItem {
+  int payCount = 0;
+
+  /// 商品详情项
+  GoodDetailItem({
+    required super.id,
+    required super.name,
+    required super.price,
+    required super.picture,
+    required super.orderNum,
+    required this.payCount,
+  }) : super(desc: "");
+  // 转化方法
+  factory GoodDetailItem.formJSON(Map<String, dynamic> json) {
+    return GoodDetailItem(
+      id: json["id"]?.toString() ?? "",
+      name: json["name"]?.toString() ?? "",
+      price: json["price"]?.toString() ?? "",
+      picture: json["picture"]?.toString() ?? "",
+      orderNum: int.tryParse(json["orderNum"]?.toString() ?? "0") ?? 0,
+      payCount: int.tryParse(json["payCount"]?.toString() ?? "0") ?? 0,
     );
   }
 }
