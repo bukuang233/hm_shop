@@ -9,6 +9,7 @@ Future<List<BannerItem>> getBannerListAPI() async {
     return BannerItem.formJSON(item as Map<String, dynamic>);
   }).toList();
 }
+
 //分类列表
 Future<List<CategoryItem>> getCategoryListAPI() async {
   return ((await dioRequest.get(HttpConstants.CATEGORY_LIST)) as List).map((
@@ -17,9 +18,26 @@ Future<List<CategoryItem>> getCategoryListAPI() async {
     return CategoryItem.formJSON(item as Map<String, dynamic>);
   }).toList();
 }
+
 //特惠推荐
 Future<SpecialRecommendation> getSpecialRecommendationAPI() async {
   return SpecialRecommendation.formJSON(
     await dioRequest.get(HttpConstants.PRODUCT_LIST),
+  );
+}
+
+// 热榜推荐
+Future<SpecialRecommendation> getInVogueListAPI() async {
+  // 返回请求
+  return SpecialRecommendation.formJSON(
+    await dioRequest.get(HttpConstants.IN_VOGUE_LIST),
+  );
+}
+
+// 一站式推荐
+Future<SpecialRecommendation> getOneStopListAPI() async {
+  // 返回请求
+  return SpecialRecommendation.formJSON(
+    await dioRequest.get(HttpConstants.ONE_STOP_LIST),
   );
 }
