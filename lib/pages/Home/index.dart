@@ -101,11 +101,24 @@ class _HomeViewState extends State<HomeView> {
 
   // 推荐列表
   List<GoodDetailItem> _recommendList = [];
-
+  int _page = 1;
+  bool _isLoading = false;
+  bool _hasMore = true;
   // 获取推荐列表
   void _getRecommendList() async {
-    _recommendList = await getRecommendListAPI({"limit": 10});
+    if (_isLoading || !_hasMore) {
+      return;
+    }
+    _isLoading = true;
+    int requestLimit = _page * 8;
+    _recommendList = await getRecommendListAPI({"limit": requestLimit});
+    _isLoading = false;
     setState(() {});
+    if (_recommendList.length < requestLimit) {
+      _hasMore = false;
+      return;
+    }
+    _page++;
   }
 
   @override
@@ -117,6 +130,16 @@ class _HomeViewState extends State<HomeView> {
     _getInVogueList();
     _getOneStopList();
     _getRecommendList();
+    _registerEvent();
+  }
+
+  void _registerEvent() {
+    _constroller.addListener(() {
+      if (_constroller.position.pixels >=
+          (_constroller.position.maxScrollExtent - 50)) {
+        _getRecommendList();
+      }
+    });
   }
 
   //获取分类列表
@@ -136,8 +159,12 @@ class _HomeViewState extends State<HomeView> {
     setState(() {});
   }
 
+  final ScrollController _constroller = ScrollController();
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(slivers: _getScrollChildern());
+    return CustomScrollView(
+      controller: _constroller,
+      slivers: _getScrollChildern(),
+    );
   }
 }
