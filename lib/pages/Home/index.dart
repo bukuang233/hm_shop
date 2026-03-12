@@ -5,6 +5,7 @@ import 'package:hm_shop/components/Home/HmHot.dart';
 import 'package:hm_shop/components/Home/HmMoreList.dart';
 import 'package:hm_shop/components/Home/HmSlider.dart';
 import 'package:hm_shop/components/Home/HmSuggestion.dart';
+import 'package:hm_shop/utils/ToastUtils.dart';
 import 'package:hm_shop/viewmodels/home.dart';
 
 class HomeView extends StatefulWidget {
@@ -87,16 +88,53 @@ class _HomeViewState extends State<HomeView> {
     subTypes: [],
   );
 
+  @override
+  void initState() {
+    super.initState();
+    _registerEvent();
+    Future.microtask(() {
+      _paddingTop = 100;
+      setState(() {});
+      _key.currentState?.show();
+    });
+  }
+
+  void _registerEvent() {
+    _constroller.addListener(() {
+      if (_constroller.position.pixels >=
+          (_constroller.position.maxScrollExtent - 50)) {
+        _getRecommendList();
+      }
+    });
+  }
+
+  //获取分类列表
+  Future<void> _getCategoryList() async {
+    _categoryList = await getCategoryListAPI();
+    // setState(() {});
+  }
+
+  //获取特惠推荐
+  Future<void> _getSpecialRecommendation() async {
+    _specialRecommendation = await getSpecialRecommendationAPI();
+    // setState(() {});
+  }
+
+  Future<void> _getBannerList() async {
+    _bannerList = await getBannerListAPI();
+    // setState(() {});
+  }
+
   // 获取热榜推荐列表
-  void _getInVogueList() async {
+  Future<void> _getInVogueList() async {
     _inVogueResult = await getInVogueListAPI();
-    setState(() {});
+    // setState(() {});
   }
 
   // 获取一站式推荐列表
-  void _getOneStopList() async {
+  Future<void> _getOneStopList() async {
     _oneStopResult = await getOneStopListAPI();
-    setState(() {});
+    // setState(() {});
   }
 
   // 推荐列表
@@ -105,7 +143,7 @@ class _HomeViewState extends State<HomeView> {
   bool _isLoading = false;
   bool _hasMore = true;
   // 获取推荐列表
-  void _getRecommendList() async {
+  Future<void> _getRecommendList() async {
     if (_isLoading || !_hasMore) {
       return;
     }
@@ -121,50 +159,37 @@ class _HomeViewState extends State<HomeView> {
     _page++;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _getBannerList();
-    _getCategoryList();
-    _getSpecialRecommendation();
-    _getInVogueList();
-    _getOneStopList();
-    _getRecommendList();
-    _registerEvent();
-  }
-
-  void _registerEvent() {
-    _constroller.addListener(() {
-      if (_constroller.position.pixels >=
-          (_constroller.position.maxScrollExtent - 50)) {
-        _getRecommendList();
-      }
-    });
-  }
-
-  //获取分类列表
-  void _getCategoryList() async {
-    _categoryList = await getCategoryListAPI();
-    setState(() {});
-  }
-
-  //获取特惠推荐
-  void _getSpecialRecommendation() async {
-    _specialRecommendation = await getSpecialRecommendationAPI();
-    setState(() {});
-  }
-
-  void _getBannerList() async {
-    _bannerList = await getBannerListAPI();
-    setState(() {});
+  Future<void> _onRefresh() async {
+    _page = 1;
+    _isLoading = false;
+    _hasMore = true;
+    await _getBannerList();
+    await _getCategoryList();
+    await _getSpecialRecommendation();
+    await _getInVogueList();
+    await _getOneStopList();
+    await _getRecommendList();
+    Toastutils.showToast(context, "刷新成功");
+    _paddingTop = 0;
   }
 
   final ScrollController _constroller = ScrollController();
+  final GlobalKey<RefreshIndicatorState> _key =
+      GlobalKey<RefreshIndicatorState>();
+  double _paddingTop = 0;
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: _constroller,
-      slivers: _getScrollChildern(),
+    return RefreshIndicator(
+      key: _key,
+      onRefresh: _onRefresh,
+      child: AnimatedContainer(
+        padding: EdgeInsets.only(top: _paddingTop),
+        duration: Duration(milliseconds: 300),
+        child: CustomScrollView(
+          controller: _constroller,
+          slivers: _getScrollChildern(),
+        ),
+      ),
     );
   }
 }
