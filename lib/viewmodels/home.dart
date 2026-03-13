@@ -200,3 +200,31 @@ class GoodDetailItem extends GoodsItem {
     );
   }
 }
+
+class GoodsDetailsData {
+  int counts;
+  int pageSize;
+  int pages;
+  int page;
+  List<GoodDetailItem> items;
+  GoodsDetailsData({
+    required this.counts,
+    required this.pageSize,
+    required this.pages,
+    required this.page,
+    required this.items,
+  });
+  factory GoodsDetailsData.formJSON(Map<String, dynamic> json) {
+    return GoodsDetailsData(
+      counts: json["counts"] ?? 0,
+      pageSize: json["pageSize"] ?? 10,
+      pages: json["pages"] ?? 0,
+      page: json["page"] ?? 1,
+      items: json["items"] != null
+          ? (json["items"] as List)
+                .map((e) => GoodDetailItem.formJSON(e))
+                .toList()
+          : [],
+    );
+  }
+}
