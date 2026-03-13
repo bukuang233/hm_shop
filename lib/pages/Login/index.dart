@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hm_shop/api/user.dart';
+import 'package:hm_shop/stores/UserConstroller.dart';
 import 'package:hm_shop/utils/ToastUtils.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,6 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _phoneController = TextEditingController(); // 账号控制器
   TextEditingController _codeController = TextEditingController(); // 密码控制器
+  final UserConstroller _userConstroller = Get.find();
   // 用户账号Widget
   Widget _buildPhoneTextField() {
     return TextFormField(
@@ -72,8 +75,8 @@ class _LoginPageState extends State<LoginPage> {
         "account": _phoneController.text,
         "password": _codeController.text,
       });
-      print(res);
-      Toastutils.showToast(context, "登陆成功");
+      _userConstroller.updateUserInfo(res);
+      Toastutils.showToast(context, "登录成功");
       Navigator.pop(context);
     } catch (e) {
       Toastutils.showToast(context, (e as DioException).message);

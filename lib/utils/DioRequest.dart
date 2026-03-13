@@ -27,7 +27,7 @@ class DioRequest {
           handler.reject(
             DioException(
               requestOptions: error.requestOptions,
-              message: error.response?.data["msg"] ?? " ",
+              message: error.response?.data["msg"] ?? "异常信息",
             ),
           );
         },
