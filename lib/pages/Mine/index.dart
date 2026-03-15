@@ -14,7 +14,7 @@ class MineView extends StatefulWidget {
 }
 
 class _MineViewState extends State<MineView> {
-  final UserConstroller _userConstroller = Get.put(UserConstroller());
+  final UserConstroller _userConstroller = Get.find();
 
   Widget _buildHeader() {
     return Container(
