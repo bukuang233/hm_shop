@@ -10,6 +10,7 @@ class DioRequest {
       ..connectTimeout = Duration(seconds: GlobalConstants.TIME_OUT)
       ..sendTimeout = Duration(seconds: GlobalConstants.TIME_OUT)
       ..receiveTimeout = Duration(seconds: GlobalConstants.TIME_OUT);
+    _addInterceptor();
   }
   void _addInterceptor() {
     _dio.interceptors.add(
